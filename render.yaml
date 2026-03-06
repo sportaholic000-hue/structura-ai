@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: structura-ai
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: DATABASE_PATH
+        value: /app/data/structura.db
+      - key: ENVIRONMENT
+        value: production
+    disk:
+      name: structura-data
+      mountPath: /app/data
+      sizeGB: 1
