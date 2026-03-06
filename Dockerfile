@@ -1,21 +1,24 @@
-FROM python:3.12-slim
+FROM python:3.11-slim
 
+# Prevent Python from buffering stdout/stderr
+ENV PYTHONUNBUFFERED=1
+
+# Set working directory
 WORKDIR /app
 
-# Install dependencies
+# Install dependencies first (layer caching)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code
-COPY . .
+# Copy application source files
+COPY main.py .
+COPY models.py .
+COPY database.py .
+COPY auth.py .
+COPY extraction.py .
 
-# Create directory for SQLite database
-RUN mkdir -p /app/data
+# Expose Render default port
+EXPOSE 10000
 
-# Set environment variables
-ENV DATABASE_PATH=/app/data/structura.db
-ENV PYTHONUNBUFFERED=1
-
-EXPOSE 8000
-
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Run the FastAPI application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000"]
